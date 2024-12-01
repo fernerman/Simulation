@@ -15,10 +15,10 @@ public class Renderer {
             output.append("\t").append(i);
         }
         output.append("\n");
-
-        for(int x = 1; x<= mapSimulation.getWidthMap(); x++){
-            output.append(String.format("%2d\t", x));
-            for(int y = 1; y<= mapSimulation.getHeightMap(); y++){
+        for(int y = 1; y<= mapSimulation.getHeightMap(); y++)
+        {
+            output.append(String.format("%2d\t", y));
+            for(int x = 1; x<= mapSimulation.getWidthMap(); x++){
                 Coordinates coord = new Coordinates(x, y);
                 Entity entity = mapSimulation.getEntity(coord);
                 output.append(entity.getBackgroundPicture()).append(entity.getPicture()).append("\t");

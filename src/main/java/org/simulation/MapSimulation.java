@@ -78,7 +78,11 @@ public class MapSimulation {
         }
         return map.get(coordinates);
     }
-
+    public Map<Coordinates, Entity> getDeadEntitiesWithMap() {
+        return map.entrySet().stream()
+                .filter(entry -> !(entry.getValue()).isAlive())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
     public  boolean isEmptyCell(Coordinates new_coordinates) {
         boolean check=false;
         Entity entityAtNewCoordinates = getEntity(new_coordinates);
@@ -100,7 +104,7 @@ public class MapSimulation {
             }
     }
 
-    public  void removeEntity(Coordinates coordinates) {
+    public void removeEntity( Coordinates coordinates) {
         map.put(coordinates,new Empty());
     }
 

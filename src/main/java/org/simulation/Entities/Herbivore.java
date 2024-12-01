@@ -42,7 +42,7 @@ public class Herbivore extends Creature  {
 
     @Override
     public void eat(Entity entity) {
-        entity=null;
+        entity.setAlive(false);
     }
 
     @Override

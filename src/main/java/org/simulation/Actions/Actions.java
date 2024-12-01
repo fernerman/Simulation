@@ -65,5 +65,9 @@ public class Actions {
                 coordinatesToFood.ifPresent(coordinates -> creature.makeMove(mapSimulation.getEntity(coordinates)));
             }
         }
+       for(var entrySet:mapSimulation.getDeadEntitiesWithMap().entrySet()){
+           var coordinate=entrySet.getKey();
+           mapSimulation.removeEntity(coordinate);
+       }
     }
 }

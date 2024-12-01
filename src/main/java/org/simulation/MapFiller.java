@@ -16,8 +16,16 @@ public class MapFiller {
     }
     public void fillMapDefault(MapSimulation map) {
         map.addEmptyCells();
+        map.addEntity(new Coordinates(4, 5), new Grass());
+        map.addEntity(new Coordinates(7, 5), new Grass());
+        map.addEntity(new Coordinates(3, 8), new Tree());
         map.addEntity(new Coordinates(7, 10), new Tree());
+        map.addEntity(new Coordinates(8, 8), new Tree());
         map.addEntity(new Coordinates(5, 5), new Herbivore(30, 1));
+        map.addEntity(new Coordinates(1, 5), new Herbivore(30, 2));
+        map.addEntity(new Coordinates(6, 6), new Rock());
+        map.addEntity(new Coordinates(5, 6), new Rock());
+        map.addEntity(new Coordinates(7, 9), new Rock());
         map.addEntity(new Coordinates(1, 1), new Predator(10, 2));
     }
     public void fillMapByUser(MapSimulation map,Renderer renderer) throws InterruptedException {
