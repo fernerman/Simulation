@@ -1,9 +1,9 @@
-package Entities;
+package main.java.org.simulation.Entities;
 
-import Constant.Picture;
+import main.java.org.simulation.Constant.Picture;
 
 public class Rock extends Entity {
     public Rock() {
-        setPicture(Picture.ROCK);
+      super(Picture.ROCK,Picture.EMPTY_BACKGROUND);
     }
 }

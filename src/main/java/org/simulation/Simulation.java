@@ -1,46 +1,35 @@
+package main.java.org.simulation;
+
 import main.java.org.simulation.Actions.Actions;
 
-import java.util.Scanner;
-
 public class Simulation {
-    private MapSimulation mapSimulation;
-    private int currentTurn=0;
-    private Renderer renderer;
     private Actions actions;
-    private boolean pause=false;
+    public  volatile boolean pause=false;
+    private volatile boolean isRunning = true;
 
-    private final  String msgPause="Вы поставили паузу\nВведите пробел, чтобы снять паузу.";
-
+    public Simulation( Actions actions) {
+        this.actions=actions;
+    }
     public void nextTurn() throws InterruptedException {
-        if(currentTurn>0){
-            actions.turnActions();
-        }
-        else {
-            actions.initActions();
-
-        }
-        renderer.render();
-        Thread.sleep(2000);
-        renderer.clearConsole();
-        currentTurn++;
+        actions.turnActions();
     }
     public void startSimulation() throws InterruptedException {
-        while(!pause){
-            nextTurn();
-        }
-
+        actions.initActions();
     }
-    public void pauseSimulation(){
-        Scanner scanner = new Scanner(System.in);
-        String letterToStopWait =scanner.nextLine();
-        if(letterToStopWait.equals(" ")){
-            this.pause=!pause;
-        }
+    public synchronized void togglePause() {
+        pause = !pause;
+        System.out.println(pause ? "Симуляция приостановлена." : "Симуляция возобновлена.");
+        System.out.println("Для выхода из Симуляции введите y.");
     }
-
-    public Simulation(MapSimulation mapSimulation, Renderer renderer, Actions actions) {
-        this.mapSimulation = mapSimulation;
-        this.renderer = renderer;
-        this.actions = actions;
+    public boolean isRunning() {
+        return isRunning;
+    }
+    public synchronized boolean isPaused() {
+        return pause;
+    }
+    public synchronized void stopSimulation() {
+        isRunning=false;
     }
 }
+
+

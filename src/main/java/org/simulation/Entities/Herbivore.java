@@ -1,53 +1,56 @@
-package Entities;
+package main.java.org.simulation.Entities;
+import main.java.org.simulation.Constant.Picture;
 
-import Constant.Picture;
 
-public class Herbivore extends Creature {
+public class Herbivore extends Creature  {
+    private final int HP_DEFAULT=100;
+    private static final int SPEED_BY_CELL_DEFAULT=1;
+    private  boolean isAlive=true;
 
-    public Herbivore() {
-        setPicture(Picture.HERBIVORE);
-        setNumberPassedCoordinates(1);
-        setHealthPoints(30);
-    }
-
-    public boolean isAlive(int currentHealthPoints){
-        return currentHealthPoints>0;
+    public Herbivore(int hp,int speed) {
+        super(Picture.HERBIVORE,
+                Picture.HERBIVORE_FIND_EAT_BACKGROUND,speed);
+        setHealthPoints(hp);
     }
     public void getDamage(int damage){
         int currentHealthPoints=this.getHealthPoints()-damage;
-        if(isAlive(currentHealthPoints)) {
+        if(currentHealthPoints > 0) {
             this.setHealthPoints(currentHealthPoints);
         }
         else{
-            clearCoordinates();
+            this.setHealthPoints(0);
+           isAlive=false;
         }
+    }
+
+    public boolean isAlive() {
+        return isAlive;
     }
 
     @Override
     public boolean makeMove(Entity entity) {
-        boolean isMoving = false;
-        switch (entity) {
-            case Grass grass -> {
-                eat(grass);
-            }
-            case Predator preadator -> {
-                preadator.eat(this);
-            }
-            case Empty empty -> {
-                isMoving = true;
-            }
-            default -> {
-            }
+        if (isFood(entity)){
+            eat(entity);
+            return false;
         }
-
-        return isMoving;
+        if(isPreadtor(entity)){
+            Predator predator =(Predator) entity;
+            predator.eat(entity);
+        }
+        return entity instanceof Empty empty;
     }
 
     @Override
     public void eat(Entity entity) {
-
+        entity=null;
     }
 
-
+    @Override
+    public boolean isFood(Entity entity) {
+        return entity instanceof Grass || entity instanceof Tree;
+    }
+    public boolean isPreadtor(Entity entity) {
+        return entity instanceof Predator;
+    }
 }
 

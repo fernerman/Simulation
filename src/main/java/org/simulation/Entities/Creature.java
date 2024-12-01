@@ -1,18 +1,24 @@
-package Entities;
+package main.java.org.simulation.Entities;
 
-import java.util.Random;
+public abstract class Creature extends Entity  {
 
-public abstract class Creature extends Entity {
-
-    public Random rand = new Random();
     private int numberPassedCoordinates;
     private int healthPoints;
+    private boolean isAlive;
+    public Creature(String picture, String backgroundPicture,int speed) {
+        super(picture, backgroundPicture);
+        this.numberPassedCoordinates=speed;
+    }
+    public boolean isAlive() {
+        return isAlive;
+    }
+    public abstract boolean isFood(Entity entity);
     public abstract boolean makeMove(Entity entity);
     public abstract void eat(Entity entity);
-    public int getNumberPassedCoordinates() {
+    public int getCountPassedCoordinatesInTurn() {
         return numberPassedCoordinates;
     }
-    public void setNumberPassedCoordinates(int numberPassedCoordinates) {
+    public void setCountPassedCoordinatesInTurn(int numberPassedCoordinates) {
         this.numberPassedCoordinates = numberPassedCoordinates;
     }
     public int getHealthPoints(){

@@ -1,45 +1,68 @@
-import Entities.*;
+package main.java.org.simulation.Actions;
+import main.java.org.simulation.*;
+import main.java.org.simulation.InputHandler;
+import main.java.org.simulation.Entities.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 public class Actions {
-    private final MapSimulation mapSimulation;
-    public Actions(MapSimulation mapSimulation) {
-        this.mapSimulation = mapSimulation;
+
+    MapSimulation mapSimulation;
+    private Renderer renderer;
+    private InputHandler inputHandler;
+    private MapFiller mapFiller;
+    public Actions(MapFiller mapFiller,Renderer renderer, MapSimulation mapSimulation, InputHandler inputHandler) {
+        this.mapFiller = mapFiller;
+        this.renderer=renderer;
+        this.mapSimulation=mapSimulation;
+        this.inputHandler = inputHandler;
     }
-
-    public void initActions(){
-        //создание creatures
-        mapSimulation.addEmptyCells();
-
-        mapSimulation.addEntity(new Coordinates(5,1),new Herbivore());
-        mapSimulation.addEntity(new Coordinates(1,1),new Predator());
-        mapSimulation.addEntity(new Coordinates(3,0),new Rock());
-        mapSimulation.addEntity(new Coordinates(3,1),new Rock());
-        mapSimulation.addEntity(new Coordinates(3,2),new Rock());
-        mapSimulation.addEntity(new Coordinates(3,3),new Rock());
-        mapSimulation.addEntity(new Coordinates(3,4),new Rock());
-        mapSimulation.addEntity(new Coordinates(8,9),new Rock());
-        mapSimulation.addEntity(new Coordinates(7,9),new Rock());
-
+    public void initActions() throws InterruptedException {
+        System.out.println(InputHandler.MESSAGE_GREETING);
+        boolean flag=true;
+        while (flag) {
+            int wayToFillMap= inputHandler.getWayFillingMapSimulation(InputHandler.MESSAGE_MAP_FILLING,1);
+            if(wayToFillMap==1){
+                mapFiller.fillMapByUser(mapSimulation,renderer);
+                flag=false;
+            }
+            if(wayToFillMap==2){
+                mapFiller.fillMapDefault(mapSimulation);
+                flag=false;
+            }
+        }
+        renderer.render(mapSimulation);
     }
-    public void turnActions (){
-        for(int x = 0; x< mapSimulation.getWidthMap(); x++) {
-            for (int y = 0; y < mapSimulation.getHeightMap(); y++) {
-                Entity entity = mapSimulation.getEntity(new Coordinates(x, y));
-                if (entity instanceof Predator creature) {
-                    for(int move=1;move<=creature.getNumberPassedCoordinates();move++){
-                        //map.moveCreature(creature,Constant.DirectionOnMap.LEFT,Constant.DirectionOnMap.UP);
-                        PathFinder pathFinder=new PathFinder(mapSimulation,creature.getCurrentCoordinates());
-                        List<Coordinates> coors=pathFinder.findPathToTarget(creature.getCurrentCoordinates());
-                        for(var cell: coors){
-                            System.out.println(cell);
-                        }
-                        for(Coordinates c:coors){
-                            mapSimulation.addEntity(c,new Grass());
-                        }
-                    }
-                }
+    public void setBackgroundColorToTarget(Creature creature, List<Coordinates> coordinates) {
+        String color =creature.getBackgroundPicture();
+        for(var cell: coordinates){
+            Entity entity =mapSimulation.getEntity(cell);
+            entity.setBackgroundPicture(color);
+            mapSimulation.addEntity(cell,entity);
+        }
+    }
+    public void turnActions () throws InterruptedException {
+        renderer.render(mapSimulation);
+        Map<Coordinates, Entity> mapWithCreatures =mapSimulation.getMapWithCreatures();
+        for(var entrySet:mapWithCreatures.entrySet()){
+            Coordinates coordinate =entrySet.getKey();
+            Creature creature=(Creature)entrySet.getValue();
+            if(!creature.isAlive()) {
+                mapSimulation.removeEntity(coordinate);
+                continue;
+            }
+            PathFinder pathFinder=new PathFinder(creature,mapSimulation,coordinate);
+            List<Coordinates> coors=pathFinder.findPathToTarget(coordinate);
+            setBackgroundColorToTarget(creature,coors);
+            if(!coors.isEmpty()){
+                Coordinates coordinatesToMove =coors.get(Math.min(creature.getCountPassedCoordinatesInTurn(),coors.size()-1));
+                mapSimulation.moveCreature(creature,coordinate,coordinatesToMove);
+                Set<Coordinates> coordinatesNearbyCreature=mapSimulation.getNeighborsCurrentCell(coordinatesToMove);
+                Optional<Coordinates> coordinatesToFood =mapSimulation.isFoundFoodNearby(creature,coordinatesNearbyCreature);
+                coordinatesToFood.ifPresent(coordinates -> creature.makeMove(mapSimulation.getEntity(coordinates)));
             }
         }
     }

@@ -1,19 +1,35 @@
-import main.java.org.simulation.Actions.Actions;
-import main.java.org.simulation.
+package main.java.org.simulation;
 import java.io.IOException;
+import java.util.Scanner;
+import main.java.org.simulation.Actions.Actions;
+import main.java.org.simulation.Entities.EntityManager;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.main.java.org.simulation.Actions.Actions.Execute"/> icon in the gutter.
 public class Main {
-    private static final int WIDTH_MAP = 10;
-    private static final int HEIGHT_MAP = 10;
-    private static final  String greeting="Игра Симуляция\nЧтобы остановить игру,нажмите пробел";
 
     public static void main(String[] args) throws InterruptedException, IOException {
-        MapSimulation mapSimulation =new MapSimulation(WIDTH_MAP, HEIGHT_MAP);
-        System.out.println(greeting);
-        Simulation simulation= new Simulation(mapSimulation,new Renderer(mapSimulation),new Actions(mapSimulation));
-        simulation.startSimulation();
+        Scanner scanner = new Scanner(System.in);
+        Renderer renderer = new Renderer();
+        MapSimulation mapSimulation=new MapSimulation();
+        EntityManager entityManager = new EntityManager();
+
+        InputHandler inputHandlerForSimilation = new InputHandler(scanner,renderer);
+        MapFiller mapFiller = new MapFiller(entityManager, inputHandlerForSimilation);
+
+        Actions actions=new Actions(mapFiller,renderer,mapSimulation, inputHandlerForSimilation);
+        Simulation simulation= new Simulation(actions);
+        SimulationManager simulationManager = new SimulationManager(simulation);
+        try{
+            inputHandlerForSimilation.setSimulation(simulation);
+            simulation.startSimulation();
+            inputHandlerForSimilation.startListening();
+            simulationManager.startSimulation();
+        }
+        catch(InterruptedException e){
+            System.out.println("Ошибка выполнения симуляции: " + e.getMessage());
+        }
+        finally{
+            System.out.println("Программа завершена.");
+        }
 
     }
 }

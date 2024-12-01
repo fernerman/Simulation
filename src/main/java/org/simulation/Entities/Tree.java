@@ -1,9 +1,9 @@
-package Entities;
+package main.java.org.simulation.Entities;
 
-import Constant.Picture;
+import main.java.org.simulation.Constant.Picture;
 
 public class Tree extends Entity {
     public Tree(){
-        setPicture(Picture.TREE);
+        super(Picture.TREE,Picture.EMPTY_BACKGROUND);
     }
 }

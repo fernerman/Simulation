@@ -1,8 +1,8 @@
-package Entities;
-import Constant.Picture;
+package main.java.org.simulation.Entities;
+import main.java.org.simulation.Constant.Picture;
 
 public class Grass extends Entity {
     public Grass() {
-        setPicture(Picture.GRASS);
+        super(Picture.GRASS,Picture.EMPTY_BACKGROUND);
     }
 }
