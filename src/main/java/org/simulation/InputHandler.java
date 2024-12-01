@@ -12,7 +12,7 @@ public class InputHandler {
     private Scanner scanner;
     private Simulation simulation;
     public final static String MESSAGE_GREETING = "Добро пожаловать в \"Симуляцию\"!";
-    public final static String MESSAGE_MAP_FILLING = "Каким образом хотите заполнить карту?\n1. Самостоятельно\n2. Случайным образом.";
+    public final static String MESSAGE_MAP_FILLING = "Каким образом хотите заполнить карту?\n1. Самостоятельно\n2. По умолчанию.";
     public final static String MESSAGE_WRONG_INPUT = "Введите корректно значение!";
     public final static int RECEIVED_ONE_VALUE = 1;
     public final static int RECEIVED_TWO_VALUES = 2;
